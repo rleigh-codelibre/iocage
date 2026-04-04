@@ -15,6 +15,11 @@ Essentially, a template is just another jail which has the property
 **template** set to **yes**. The difference is templates are not started
 by :command:`iocage`.
 
+.. tip:: For a declarative, reproducible approach to creating templates,
+   see :ref:`Building Jails`. The :command:`iocage build` command reads
+   a :file:`RapSheet.json` configuration file and produces a template
+   with ZFS layer caching for fast rebuilds.
+
 **Create a template with iocage:**
 
 1. Create a jail: :samp:`# iocage create -r 11.0-RELEASE -n mytemplate`.

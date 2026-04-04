@@ -79,6 +79,14 @@ class Exists(ExceptionWithMsg):
     pass
 
 
+class BuildFailed(ExceptionWithMsg):
+    pass
+
+
+class RapSheetParseError(ExceptionWithMsg):
+    pass
+
+
 @contextmanager
 def ignore_exceptions(*exceptions, clean=None, suppress_exception=True):
     """

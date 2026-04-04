@@ -15,6 +15,8 @@ learn command syntax.
 **FEATURES:**
 
 - Templates, basejails, and normal jails
+- Declarative jail building with RapSheet.json
+- ZFS snapshot-based layer caching for fast rebuilds
 - Easy to use
 - Rapid thin provisioning within seconds
 - Automatic package installation
@@ -39,6 +41,7 @@ Documentation:
    jailtypes
    best-practices
    advanced-use
+   building
    templates
    debian
    known-issues

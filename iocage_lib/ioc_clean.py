@@ -85,7 +85,8 @@ class IOCClean:
         """Cleans everything related to iocage."""
         datasets = ('iocage', 'iocage/download', 'iocage/images',
                     'iocage/log', 'iocage/releases', 'iocage/jails',
-                    'iocage/templates')
+                    'iocage/templates', 'iocage/builds/cache',
+                    'iocage/builds')
 
         for dataset in reversed(datasets):
             iocage_lib.ioc_common.logit({
@@ -121,6 +122,19 @@ class IOCClean:
             silent=self.silent)
 
         Dataset(f'{self.pool}/iocage/images').destroy(True, True)
+
+    def clean_builds(self):
+        """Cleans all build cache datasets."""
+        iocage_lib.ioc_common.logit({
+            'level': 'INFO',
+            'message': 'Cleaning iocage/builds/cache'
+        },
+            _callback=self.callback,
+            silent=self.silent)
+
+        iocage_lib.ioc_destroy.IOCDestroy().__destroy_parse_datasets__(
+            f'{self.pool}/iocage/builds/cache',
+            clean=True)
 
     def clean_debug(self):
         """Removes the debug directory"""

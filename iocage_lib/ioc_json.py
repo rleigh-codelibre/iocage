@@ -1275,6 +1275,14 @@ class IOCConfiguration:
             'vnet2_mtu': 'auto',
             'vnet3_mtu': 'auto',
             'vnet_default_mtu': '1500',
+            'maintainer': 'none',
+            'description': 'none',
+            'labels': 'none',
+            'build_env': 'none',
+            'tags': 'none',
+            'rapsheet_hash': 'none',
+            'build_date': 'none',
+            'build_from': 'none',
         }
 
     def check_default_config(self):

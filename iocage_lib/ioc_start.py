@@ -819,6 +819,20 @@ class IOCStart(object):
         # This needs to be a list.
         exec_start = self.conf['exec_start'].split()
 
+        # Inject build_env if present
+        build_env_str = self.conf.get('build_env', 'none')
+        if build_env_str and build_env_str != 'none':
+            try:
+                import json
+                build_env = json.loads(build_env_str)
+                if isinstance(build_env, dict) and build_env:
+                    env_args = []
+                    for k, v in build_env.items():
+                        env_args.append(f'{k}={v}')
+                    exec_start = ['env'] + env_args + exec_start
+            except (json.JSONDecodeError, TypeError):
+                pass
+
         with open(
             f'{self.iocroot}/log/{self.uuid}-console.log', 'a'
         ) as f:

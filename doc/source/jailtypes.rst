@@ -57,7 +57,9 @@ Template
 --------
 
 Template jails are customized jails used to quickly create further
-custom jails.
+custom jails. Templates can be created manually by converting an
+existing jail, or declaratively using :command:`iocage build` with a
+:file:`RapSheet.json` file (see :ref:`Building Jails`).
 
 For example, after creating a jail, the user customizes
 that jail's networking properties. Once satisfied, the user then changes

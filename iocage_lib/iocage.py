@@ -477,6 +477,16 @@ class IOCage:
                 },
                 _callback=self.callback,
                 silent=self.silent)
+        elif d_type == 'builds':
+            ioc_clean.IOCClean(silent=self.silent).clean_builds()
+            ioc_common.logit(
+                {
+                    'level': 'INFO',
+                    'message':
+                    'All iocage build cache datasets have been destroyed.'
+                },
+                _callback=self.callback,
+                silent=self.silent)
         else:
             ioc_common.logit(
                 {
@@ -845,6 +855,16 @@ class IOCage:
             }
         else:
             su_env = os.environ.copy()
+
+        # Inject build_env if present
+        build_env_str = self.get('build_env')
+        if build_env_str and build_env_str != 'none':
+            try:
+                build_env = json.loads(build_env_str)
+                if isinstance(build_env, dict):
+                    su_env.update(build_env)
+            except (json.JSONDecodeError, TypeError):
+                pass
 
         status, jid = self.list("jid", uuid=uuid)
 
@@ -2256,3 +2276,80 @@ Remove the snapshot: ioc_upgrade_{_date} if everything is OK
                 },
                 _callback=self.callback, silent=self.silent
             )
+
+    def build(self, rapsheet_path, name=None, tag=None, no_cache=False,
+              keep_build_jail=False, props=()):
+        """Builds a template jail from a RapSheet.json file."""
+        import iocage_lib.ioc_build as ioc_build
+        return ioc_build.IOCBuild(
+            rapsheet_path,
+            name=name,
+            tag=tag,
+            no_cache=no_cache,
+            keep_build_jail=keep_build_jail,
+            props=props,
+            silent=self.silent,
+            callback=self.callback
+        ).build()
+
+    def tag(self, tag_name=None, remove=False, list_tags=False):
+        """Manage tags on a jail or template."""
+        uuid, path = self.__check_jail_existence__()
+        conf = ioc_json.IOCJson(path, silent=self.silent).json_get_value('all')
+
+        current_tags = conf.get('tags', 'none')
+        if current_tags == 'none':
+            current_tags = ''
+
+        tags = [t.strip() for t in current_tags.split(',') if t.strip()]
+
+        if list_tags:
+            if tags:
+                for t in tags:
+                    ioc_common.logit(
+                        {'level': 'INFO', 'message': t},
+                        _callback=self.callback, silent=self.silent
+                    )
+            else:
+                ioc_common.logit(
+                    {'level': 'INFO', 'message': 'No tags'},
+                    _callback=self.callback, silent=self.silent
+                )
+            return
+
+        if not tag_name:
+            ioc_common.logit(
+                {
+                    'level': 'EXCEPTION',
+                    'message': 'Please supply a tag name'
+                },
+                _callback=self.callback, silent=self.silent
+            )
+
+        if remove:
+            if tag_name in tags:
+                tags.remove(tag_name)
+                ioc_common.logit(
+                    {'level': 'INFO',
+                     'message': f'Tag {tag_name} removed from {uuid}'},
+                    _callback=self.callback, silent=self.silent
+                )
+            else:
+                ioc_common.logit(
+                    {'level': 'EXCEPTION',
+                     'message': f'Tag {tag_name} not found on {uuid}'},
+                    _callback=self.callback, silent=self.silent
+                )
+        else:
+            if tag_name not in tags:
+                tags.append(tag_name)
+            ioc_common.logit(
+                {'level': 'INFO',
+                 'message': f'Tag {tag_name} added to {uuid}'},
+                _callback=self.callback, silent=self.silent
+            )
+
+        new_tags = ','.join(tags) if tags else 'none'
+        ioc_json.IOCJson(path, silent=self.silent).json_set_value(
+            f'tags={new_tags}'
+        )

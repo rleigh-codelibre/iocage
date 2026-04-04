@@ -85,7 +85,8 @@ class IOCCheck(object):
         """
         datasets = ("iocage", "iocage/download", "iocage/images",
                     "iocage/jails", "iocage/log", "iocage/releases",
-                    "iocage/templates")
+                    "iocage/templates", "iocage/builds",
+                    "iocage/builds/cache")
 
         for dataset in datasets:
             zfs_dataset_name = f"{self.pool}/{dataset}"

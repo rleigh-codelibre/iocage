@@ -46,6 +46,8 @@ __rootcmd__ = True
 @click.option('--debug', '-d', 'dataset_type', flag_value='debug',
               help='Destroy all debugs created in the default debug directory.'
               )
+@click.option('--builds', 'dataset_type', flag_value='builds',
+              help='Destroy all build cache datasets.')
 def cli(force, dataset_type):
     """Calls the correct destroy function."""
     if dataset_type == 'jails':
@@ -81,6 +83,11 @@ def cli(force, dataset_type):
         msg = {
             'level': 'WARNING',
             'message': 'This will destroy ALL debugs created at iocage/debug!'
+        }
+    elif dataset_type == 'builds':
+        msg = {
+            'level': 'WARNING',
+            'message': 'This will destroy ALL build cache datasets!'
         }
     else:
         ioc_common.logit({
